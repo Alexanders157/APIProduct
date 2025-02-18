@@ -21,4 +21,9 @@ class Ticket extends Model
     public function session() {
         return $this->belongsTo(Session::class);
     }
+
+    public function movie()
+    {
+        return $this->belongsTo(Movie::class);
+    }
 }

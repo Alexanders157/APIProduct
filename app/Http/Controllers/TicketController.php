@@ -40,9 +40,12 @@ class TicketController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Ticket $ticket)
+    public function show($id)
     {
-        //
+        $ticket = Ticket::find($id);
+        $ticket->load('movie');
+
+        return new TicketResource($ticket, 'Ваш купленный билет', 200);
     }
 
     /**

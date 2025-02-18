@@ -31,4 +31,12 @@ class Session extends Model
     public function tickets() {
         return $this->hasMany(Ticket::class);
     }
+
+    public function scopeDate($query, $date) {
+        return $query->whereDate('start_time', $date);
+    }
+
+    public function scopeMovie($query, $movie) {
+        return $query->where('movie_id', $movie);
+    }
 }

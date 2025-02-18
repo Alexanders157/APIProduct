@@ -19,4 +19,8 @@ class Movie extends Model
     public function sessions() {
         return $this->hasMany(Session::class);
     }
+
+    public function tickets() {
+        return $this->hasMany(Ticket::class);
+    }
 }

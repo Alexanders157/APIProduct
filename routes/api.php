@@ -17,7 +17,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('movies', [MovieController::class, 'index']);
 
     Route::post('tickets', [TicketController::class, 'store']);
+    Route::get('tickets/{ticket}', [TicketController::class, 'show']);
 
+    Route::get('sessions', [SessionController::class, 'index']);
     Route::get('sessions/{session}', [SessionController::class, 'show']);
 });
 
