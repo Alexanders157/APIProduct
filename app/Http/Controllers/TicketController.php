@@ -15,7 +15,9 @@ class TicketController extends Controller
      */
     public function index()
     {
-        //
+        $ticket = Ticket::all();
+
+        return TicketResource::collection($ticket);
     }
 
     /**
