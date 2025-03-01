@@ -50,19 +50,4 @@ class TicketController extends Controller
         return new TicketResource($ticket, 'Ваш купленный билет', 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Ticket $ticket)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Ticket $ticket)
-    {
-        //
-    }
 }

@@ -24,15 +24,22 @@ class TicketRequest extends FormRequest
     public function rules(): array
     {
         $session = Session::findOrFail($this->session_id);
+        $hall = $session->hall;
+        $capacity = $hall->capacity;
+
         return [
             'user_id' => 'required|exists:users,id',
             'session_id' => 'required|exists:sessionss,id',
             'seat_number' => [
                 'required',
+                'integer',
+                'min:1',
+                'max:' . $capacity,
                 Rule::unique('tickets')->where(function ($query) {
                     return $query->where('session_id', $this->session_id);
                 }),
             ],
+            'movie_id' => 'required|exists:movies,id',
         ];
     }
 }

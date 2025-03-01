@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('movies', function (Blueprint $table) {
-            //
+            $table->time('duration')->change();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('movies', function (Blueprint $table) {
-            //
+            $table->integer('duration')->change();
         });
     }
 };

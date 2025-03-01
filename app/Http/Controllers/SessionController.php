@@ -21,7 +21,7 @@ class SessionController extends Controller
             'per_page' => 'sometimes|integer|min:1|max:100',
         ]);
 
-        $query = Session::with(['movie', 'hall']) // Загружаем связанные модели
+        $query = Session::with(['movie', 'hall'])
         ->orderBy('start_time', 'asc');
 
         if ($request->has('movie_id')) {
@@ -52,14 +52,6 @@ class SessionController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show($id)
@@ -67,21 +59,5 @@ class SessionController extends Controller
         $session = Session::with('hall', 'movie', 'tickets')->findOrFail($id);
 
         return new SessionResource($session);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Session $session)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Session $session)
-    {
-        //
     }
 }

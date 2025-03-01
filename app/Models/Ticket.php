@@ -10,6 +10,7 @@ class Ticket extends Model
         'user_id',
         'session_id',
         'seat_number',
+        'movie_id',
         'price',
         'purchase_date',
     ];

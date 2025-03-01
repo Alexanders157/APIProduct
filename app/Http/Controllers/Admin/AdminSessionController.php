@@ -3,47 +3,42 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreSessionRequest;
+use App\Http\Resources\SessionResource;
+use App\Models\Session;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AdminSessionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreSessionRequest $request)
     {
-        //
-    }
+        $validatedData = $request->validated();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $isHallBusy = Session::where('hall_id', $request->hall_id)
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('start_time', [
+                    $request->start_time,
+                    Carbon::parse($request->start_time)->addMinutes(30)
+                ])
+                    ->orWhereBetween('end_time', [
+                        $request->start_time,
+                        Carbon::parse($request->start_time)->addMinutes(30)
+                    ]);
+            })->exists();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if ($isHallBusy) {
+            return response()->json([
+                'error' => 'Зал занят в это время'
+            ], 409);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $session = Session::create($validatedData);
+
+        return new SessionResource($session);
     }
 }

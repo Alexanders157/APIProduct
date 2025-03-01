@@ -19,7 +19,8 @@ class SessionResource extends JsonResource
             'hall_name' => $this->hall->name,
             'capacity' => $this->hall->capacity,
             'available_seats' => array_values($availableSeats),
-            'price' => $this->ticket->price
+            'occupied_seats' => $occupiedSeats->toArray(),
+            //'price' => $this->ticket->price
         ];
     }
 }

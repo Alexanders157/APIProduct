@@ -19,7 +19,7 @@ class MovieFactory extends Factory
         return [
             'title' => $this->faker->name(),
             'description' => $this->faker->text(),
-            'duration' => $this->faker->randomNumber(),
+            'duration' => $this->faker->time('H:i:s'),
             'genre' => $this->faker->randomElement(['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Romance', 'Sci-Fi', 'Thriller']),
             'release_date' => $this->faker->date(),
         ];
