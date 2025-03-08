@@ -20,7 +20,6 @@ class TicketResource extends JsonResource
     public function __construct($resource, $message)
     {
         parent::__construct($resource);
-
         $this->message = $message;
     }
 
@@ -28,7 +27,7 @@ class TicketResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'movie' => $this->movie->title,
+            'movie' => $this->session->movie->title,
             'seat_number' => $this->seat_number,
             'price' => $this->price,
             'purchase_date' => $this->purchase_date,

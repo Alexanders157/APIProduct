@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('hall_id')->constrained('halls')->onDelete('cascade');
             $table->datetime('start_time');
             $table->datetime('end_time');
+            $table->decimal('price', 8, 2);
             $table->timestamps();
         });
     }

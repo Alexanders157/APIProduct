@@ -7,6 +7,7 @@ use App\Http\Resources\TicketResource;
 use App\Models\Session;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class TicketController extends Controller
 {
@@ -15,9 +16,11 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $ticket = Ticket::all();
+        $tickets = Cache::remember("tickets", 3600, function () {
+            return Ticket::all();
+        });
 
-        return TicketResource::collection($ticket);
+        return TicketResource::collection($tickets);
     }
 
     /**
@@ -34,7 +37,10 @@ class TicketController extends Controller
         $validatedData['price'] = $price;
         $validatedData['purchase_date'] = now();
 
-        $ticket = Ticket::create($validatedData);
+        $ticket = Ticket::create($validatedData)->load('session.movie');
+
+        Cache::forget("session_{$validatedData['session_id']}");
+        Cache::forget("tickets");
 
         return new TicketResource($ticket, 'Билет на фильм успешно приобретён', 201);
     }
@@ -44,8 +50,11 @@ class TicketController extends Controller
      */
     public function show($id)
     {
-        $ticket = Ticket::find($id);
-        $ticket->load('movie');
+        $ticket = Cache::remember("ticket_{$id}", 3600, function () use ($id) {
+            $ticket = Ticket::find($id);
+            $ticket->load('movie');
+            return $ticket;
+        });
 
         return new TicketResource($ticket, 'Ваш купленный билет', 200);
     }

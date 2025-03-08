@@ -35,11 +35,8 @@ class TicketRequest extends FormRequest
                 'integer',
                 'min:1',
                 'max:' . $capacity,
-                Rule::unique('tickets')->where(function ($query) {
-                    return $query->where('session_id', $this->session_id);
-                }),
+                Rule::unique('tickets')->where('session_id', $this->session_id),
             ],
-            'movie_id' => 'required|exists:movies,id',
         ];
     }
 }

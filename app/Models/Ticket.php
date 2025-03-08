@@ -10,7 +10,6 @@ class Ticket extends Model
         'user_id',
         'session_id',
         'seat_number',
-        'movie_id',
         'price',
         'purchase_date',
     ];
@@ -23,8 +22,4 @@ class Ticket extends Model
         return $this->belongsTo(Session::class);
     }
 
-    public function movie()
-    {
-        return $this->belongsTo(Movie::class);
-    }
 }

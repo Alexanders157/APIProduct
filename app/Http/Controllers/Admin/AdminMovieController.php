@@ -8,6 +8,7 @@ use App\Http\Requests\MovieUpdateRequest;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AdminMovieController extends Controller
 {
@@ -17,8 +18,9 @@ class AdminMovieController extends Controller
     public function store(MovieStoreRequest $request)
     {
         $validatedData = $request->validated();
-
         $movie = Movie::create($validatedData);
+
+        Cache::forget("movies");
 
         return new MovieResource($movie);
     }
@@ -34,6 +36,9 @@ class AdminMovieController extends Controller
 
         $movie->update($validatedData);
 
+        Cache::forget("movies");
+        Cache::forget("movie_{$id}");
+
         return new MovieResource($movie);
 
     }
@@ -46,10 +51,13 @@ class AdminMovieController extends Controller
         $movie = Movie::find($id);
 
         if (!$movie) {
-            return response()->json(['message' => 'Movie not found'], 404);
+            return response()->json(['message' => 'Фильм не найден'], 404);
         }
 
         $movie->delete();
+
+        Cache::forget('movies');
+        Cache::forget("movie_{$id}");
 
         return new MovieResource($movie);
     }

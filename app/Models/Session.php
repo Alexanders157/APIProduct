@@ -11,29 +11,25 @@ class Session extends Model
 
     protected $table = 'sessionss';
 
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+    ];
+
     protected static function boot()
     {
         parent::boot();
 
         static::saving(function ($session) {
             if ($session->movie && $session->start_time && !$session->end_time) {
-                $duration = $session->movie->duration;
-                $session->end_time = $session->start_time->copy()->addMinutes($duration);
+                $session->end_time = $session->start_time->addMinutes($session->movie->duration);
             }
 
             if ($session->hall_id && $session->start_time && $session->end_time) {
                 $conflictingSession = Session::where('hall_id', $session->hall_id)
-                    ->where(function ($query) use ($session) {
-                        $query->whereBetween('start_time', [$session->start_time, $session->end_time])
-                            ->orWhereBetween('end_time', [$session->start_time, $session->end_time])
-                            ->orWhere(function ($query) use ($session) {
-                                $query->where('start_time', '<', $session->end_time)
-                                    ->where('end_time', '>', $session->start_time);
-                            });
-                    })
-                    ->when($session->exists, function ($query) use ($session) {
-                        $query->where('id', '!=', $session->id);
-                    })
+                    ->where('start_time', '<', $session->end_time)
+                    ->where('end_time', '>', $session->start_time)
+                    ->when($session->exists, fn ($query) => $query->where('id', '!=', $session->id))
                     ->first();
 
                 if ($conflictingSession) {
@@ -56,15 +52,5 @@ class Session extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
-    }
-
-    public function scopeDate($query, $date)
-    {
-        return $query->whereDate('start_time', $date);
-    }
-
-    public function scopeMovie($query, $movie)
-    {
-        return $query->where('movie_id', $movie);
     }
 }

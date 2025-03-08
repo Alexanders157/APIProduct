@@ -16,11 +16,16 @@ class SessionFactory extends Factory
      */
     public function definition(): array
     {
+        $startTime = $this->faker->dateTimeBetween('-1 week', '+1 week');
+        $endTime = clone $startTime;
+        $endTime->modify('+2 hours');
+
         return [
             'movie_id' => $this->faker->numberBetween(1, 5),
             'hall_id' => $this->faker->numberBetween(1, 5),
-            'start_time' => $this->faker->datetime(),
-            'end_time' => $this->faker->datetime(),
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'price' => $this->faker->randomFloat(2, 10, 50),
         ];
     }
 }
