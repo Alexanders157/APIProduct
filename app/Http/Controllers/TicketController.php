@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TicketRequest;
 use App\Http\Resources\TicketResource;
+use App\Jobs\SendTicketConfirmation;
 use App\Models\Session;
 use App\Models\Ticket;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,10 +16,10 @@ class TicketController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Authenticatable $user)
     {
-        $tickets = Cache::remember("tickets", 3600, function () {
-            return Ticket::all();
+        $tickets = Cache::remember("tickets_user_{$user->id}", 3600, function () use ($user) {
+            return Ticket::where('user_id', $user->id)->get();
         });
 
         return TicketResource::collection($tickets);
@@ -42,21 +44,25 @@ class TicketController extends Controller
         Cache::forget("session_{$validatedData['session_id']}");
         Cache::forget("tickets");
 
+        SendTicketConfirmation::dispatch($ticket);
+
         return new TicketResource($ticket, 'Билет на фильм успешно приобретён', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Authenticatable $user, $ticket)
     {
-        $ticket = Cache::remember("ticket_{$id}", 3600, function () use ($id) {
-            $ticket = Ticket::find($id);
-            $ticket->load('movie');
-            return $ticket;
+        $ticketData = Cache::remember("ticket_{$ticket}_user_{$user->id}", 3600, function () use ($user, $ticket) {
+            $ticketModel = Ticket::where('id', $ticket)
+                ->where('user_id', $user->id)
+                ->firstOrFail();
+            $ticketModel->load('session.movie');
+            return $ticketModel;
         });
 
-        return new TicketResource($ticket, 'Ваш купленный билет', 200);
+        return new TicketResource($ticketData, 'Ваш купленный билет', 200);
     }
 
 }

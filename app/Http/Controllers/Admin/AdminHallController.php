@@ -7,6 +7,7 @@ use App\Http\Requests\StoreHallRequest;
 use App\Http\Resources\HallResource;
 use App\Models\Hall;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AdminHallController extends Controller
 {
@@ -18,6 +19,7 @@ class AdminHallController extends Controller
         $validatedData = $request->validated();
 
         $hall = Hall::create($validatedData);
+        Cache::forget("halls");
 
         return new HallResource($hall);
     }

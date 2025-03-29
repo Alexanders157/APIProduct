@@ -39,4 +39,11 @@ class TicketRequest extends FormRequest
             ],
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'seat_number.unique' => 'Место занято',
+        ];
+    }
 }

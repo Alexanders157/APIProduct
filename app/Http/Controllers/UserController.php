@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\SendVerificationEmail;
 
 class UserController extends Controller
 {
@@ -23,6 +24,8 @@ class UserController extends Controller
         event(new Registered($user));
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        SendVerificationEmail::dispatch($user);
 
         return new RegisterResource($user, $token, "Пользователь успешно зарегистрирован. Пожалуйста, проверьте свою электронную почту для проверки.", 200);
     }
