@@ -29,7 +29,7 @@ class TicketPurchased extends Mailable
     public function build()
     {
         return $this->subject('Ваш билет')
-            ->view('emails.ticket_purchased.blade.php')
+            ->view('emails.ticket_purchased')
             ->with(['ticket' => $this->ticket]);
     }
     public function envelope(): Envelope

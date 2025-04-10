@@ -25,13 +25,6 @@ class SendVerificationEmail implements ShouldQueue
 
     public function handle(): void
     {
-        try {
-            Log::info('Starting SendVerificationEmail for user ID: ' . $this->user->id);
-            $this->user->sendEmailVerificationNotification();
-            Log::info('Verification email sent for user ID: ' . $this->user->id);
-        } catch (\Exception $e) {
-            Log::error('Failed to send verification email for user ID: ' . $this->user->id . '. Error: ' . $e->getMessage());
-            throw $e;
-        }
+        $this->user->sendEmailVerificationNotification();
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -37,6 +38,11 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::get('sessions', [SessionController::class, 'index']);
     Route::get('sessions/{session}', [SessionController::class, 'show']);
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+        return response()->json(['message' => 'Email успешно подтвержден'], 200);
+    })->middleware(['signed'])->name('verification.verify');
 });
 
 Route::post('register', [UserController::class, 'register']);

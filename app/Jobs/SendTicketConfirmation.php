@@ -25,13 +25,6 @@ class SendTicketConfirmation implements ShouldQueue
 
     public function handle(): void
     {
-        try {
-            Log::info('Starting SendTicketConfirmation for ticket ID: ' . $this->ticket->id);
-            Mail::to($this->ticket->user->email)->send(new TicketPurchased($this->ticket));
-            Log::info('Ticket confirmation email sent for ticket ID: ' . $this->ticket->id);
-        } catch (\Exception $e) {
-            Log::error('Failed to send ticket confirmation for ticket ID: ' . $this->ticket->id . '. Error: ' . $e->getMessage());
-            throw $e; // Повторно выбрасываем исключение, чтобы задача попала в failed_jobs
-        }
+       Mail::to($this->ticket->user->email)->send(new TicketPurchased($this->ticket));
     }
 }
